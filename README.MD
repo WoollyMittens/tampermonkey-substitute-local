@@ -37,11 +37,9 @@ In this case the following domain would be affected: www.domain.tld
 ### Configure the assets to remove
 
 ```javascript
-const removals = [
-  {
-    target: 'link[rel="stylesheet"]',
-  }
-];
+const removals = [{
+  target: 'link[rel="stylesheet"]',
+}];
 ```
 
 **target**: All elements that match this selector will be removed.
@@ -49,14 +47,12 @@ const removals = [
 ### Confgure the assets to replace
 
 ```javascript
-  const replacements = [
-    {
-      target: 'link[rel="stylesheet"]',
-      attribute: 'href',
-      remote: /css\//,
-      local: 'http://localhost/PATH/TO/CSS/'
-    }
-  ];
+const replacements = [{
+  target: 'link[rel="stylesheet"]',
+  attribute: 'href',
+  remote: /css\//,
+  local: 'http://localhost/PATH/TO/CSS/'
+}];
 ```
 
 - **target**: A element that matches this selector will be replaced.
@@ -67,15 +63,13 @@ const removals = [
 ### Configure the assets to add
 
 ```javascript
-const additions = [
-  {
-    target: 'head',
-    tag: 'style',
-    attribute: 'innerhtml',
-    value: 'styles.css',
-    path: 'http://localhost/PATH/TO/ASSET/'
-  }
-];
+const additions = [{
+  target: 'head',
+  tag: 'style',
+  attribute: 'innerhtml',
+  value: 'styles.css',
+  path: 'http://localhost/PATH/TO/ASSET/'
+}];
 ```
 
 - **target**: The addition will be made to the container that matches this selector.

@@ -14,30 +14,24 @@
 
     'use strict';
 
-    const removals = [
-        {
-            target: 'link[rel="stylesheet"]',
-        }
-    ];
+    const removals = [{
+        target: 'link[rel="stylesheet"]',
+    }];
 
-    const replacements = [
-        {
-            target: 'link[rel="stylesheet"]',
-            attribute: 'href',
-            remote: /css\//,
-            local: 'http://localhost/PATH/TO/CSS/'
-        }
-    ];
+    const replacements = [{
+        target: 'link[rel="stylesheet"]',
+        attribute: 'href',
+        remote: /css\//,
+        local: 'http://localhost/PATH/TO/CSS/'
+    }];
 
-    const additions = [
-        {
-			target: 'head',
-            tag: 'style',
-            attribute: 'innerhtml',
-            value: 'styles.css',
-            path: 'http://localhost/PATH/TO/ASSET/'
-        }
-    ];
+    const additions = [{
+        target: 'head',
+        tag: 'style',
+        attribute: 'innerhtml',
+        value: 'styles.css',
+        path: 'http://localhost/PATH/TO/ASSET/'
+    }];
 
     function performRemovals() {
         // perform the removals
