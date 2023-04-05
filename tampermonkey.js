@@ -10,102 +10,109 @@
 // @connect      localhost
 // ==/UserScript==
 
-(function() {
+(function () {
+	"use strict";
 
-    'use strict';
+	const removals = [
+		{
+			target: 'link[rel="stylesheet"]',
+		},
+	];
 
-    const removals = [{
-        target: 'link[rel="stylesheet"]',
-    }];
+	const replacements = [
+		{
+			target: 'link[rel="stylesheet"]',
+			attribute: "href",
+			remote: /css\//,
+			local: "http://localhost/PATH/TO/CSS/",
+			suffix: "?t={t}",
+		},
+	];
 
-    const replacements = [{
-        target: 'link[rel="stylesheet"]',
-        attribute: 'href',
-        remote: /css\//,
-        local: 'http://localhost/PATH/TO/CSS/'
-    }];
+	const additions = [
+		{
+			target: "head",
+			value: "styles.css",
+			path: "http://localhost/PATH/TO/ASSET/",
+			suffix: "?t={t}",
+			wrapper: "<style>{w}</style>",
+			delay: 0,
+		},
+	];
 
-    const additions = [{
-        target: 'head',
-        tag: 'style',
-        attribute: 'innerhtml',
-        value: 'styles.css',
-        path: 'http://localhost/PATH/TO/ASSET/'
-    }];
-
-    function performRemovals() {
-        // perform the removals
-        for(let removal of removals) {
-            let elements = document.querySelectorAll(removal.target + ',[data-addition]');
-            for(let element of elements) {
-                element.parentNode.removeChild(element);
-            }
-        }
-    }
-
-    function performReplacements() {
-        // perform the replacements
-        for(let replacement of replacements) {
-            let elements = document.querySelectorAll(replacement.target);
-            for(let element of elements) {
-                let path = element.getAttribute(replacement.attribute);
-                path = path.replace(replacement.remote, replacement.local);
-                element.setAttribute(replacement.attribute, path);
-            }
-        }
-    }
-
-    function performAdditions() {
-        // perform the additions
-        for(let addition of additions) {
-
-			// use an existing element
-			let insertion = document.querySelector(addition.target);
-
-			// or create a new one
-			if (addition.tag) {
-				let element = document.createElement(addition.tag);
-                element.setAttribute('data-addition', '');
-				insertion.appendChild(element);
-                insertion = element;
+	function performRemovals() {
+		// perform the removals
+		for (let removal of removals) {
+			let elements = document.querySelectorAll(removal.target + ",[data-addition]");
+			for (let element of elements) {
+				element.parentNode.removeChild(element);
 			}
+		}
+	}
 
+	function performReplacements() {
+		// perform the replacements
+		for (let replacement of replacements) {
+			let elements = document.querySelectorAll(replacement.target);
+			for (let element of elements) {
+				let path = element.getAttribute(replacement.attribute);
+				path = path.replace(replacement.remote, replacement.local) + replacement.suffix.replace("{t}", new Date().getTime());
+				element.setAttribute(replacement.attribute, path);
+			}
+		}
+	}
+
+	function performAdditions() {
+		// perform the additions
+		for (let addition of additions) {
 			// load the content
-            switch(addition.attribute) {
-                case 'innerhtml':
-                    GM_xmlhttpRequest({
-                      method: 'GET',
-                      url: addition.path + addition.value,
-                      onload: (evt) => {
-                        if (evt.status !== 200) { console.log('error retrieving file:', evt); return null; };
-                        let contents = evt.responseText || evt.target.responseText;
-                        insertion.innerHTML = contents.replace(/\.\.\//g, addition.path);
-                      }
-                    });
-                    break;
-                default:
-					insertion.setAttribute(addition.attribute, addition.path + addition.value);
-            }
+			GM_xmlhttpRequest({
+				method: "GET",
+				url: addition.path + addition.value + addition.suffix.replace("{t}", new Date().getTime()),
+				onload: (evt) => {
+					if (evt.status !== 200) {
+						console.log("error retrieving file:", evt);
+						return null;
+					}
+					// TODO: create a new container via a template
+					// use an existing element
+					setTimeout(() => {
+						let insertion = document.querySelector(addition.target);
+						let response = evt.responseText || evt.target.responseText;
+						let template = document.createElement("template");
+                        let wrapper = addition.wrapper || '{w}';
+                        let contents = response.replace(/\.\.\//g, addition.path);
+						template.innerHTML = wrapper.replace('{w}', contents);
+						condemn(template.content);
+						insertion.appendChild(template.content);
+					}, addition.delay);
+				},
+			});
+		}
+	}
 
-        }
-    }
+	function condemn(content) {
+		let elements = content.querySelectorAll("*");
+		for (let element of elements) {
+			if (element?.setAttribute) element.setAttribute("data-addition", "");
+		}
+	}
 
-    function update() {
-        performRemovals();
-        performReplacements();
-        performAdditions();
-    }
+	function update() {
+		performRemovals();
+		performReplacements();
+		performAdditions();
+	}
 
-    function refreshkey(evt) {
-        if (evt.key === '`' || evt.key === '~') {
-            performRemovals();
-            performReplacements();
-            performAdditions();
-        }
-    }
+	function refreshkey(evt) {
+		if (evt.key === "`" || evt.key === "~") {
+			performRemovals();
+			performReplacements();
+			performAdditions();
+		}
+	}
 
-    setTimeout(update.bind(this), 500);
+	setTimeout(update.bind(this), 500);
 
-    window.addEventListener('keyup', refreshkey.bind(this));
-
+	window.addEventListener("keyup", refreshkey.bind(this));
 })();
