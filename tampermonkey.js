@@ -32,7 +32,7 @@
 	const additions = [
 		{
 			target: "head",
-			value: "styles.css",
+			filename: "styles.css",
 			path: "http://localhost/PATH/TO/ASSET/",
 			suffix: "?t={t}",
 			wrapper: "<style>{w}</style>",
@@ -68,7 +68,7 @@
 			// load the content
 			GM_xmlhttpRequest({
 				method: "GET",
-				url: addition.path + addition.value + addition.suffix.replace("{t}", new Date().getTime()),
+				url: addition.path + addition.filename + addition.suffix.replace("{t}", new Date().getTime()),
 				onload: (evt) => {
 					if (evt.status !== 200) {
 						console.log("error retrieving file:", evt);

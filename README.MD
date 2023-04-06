@@ -51,7 +51,8 @@ const replacements = [{
   target: 'link[rel="stylesheet"]',
   attribute: 'href',
   remote: /css\//,
-  local: 'http://localhost/PATH/TO/CSS/'
+  local: 'http://localhost/PATH/TO/CSS/',
+	suffix: "?t={t}"
 }];
 ```
 
@@ -59,24 +60,27 @@ const replacements = [{
 - **attrbute**: The attribute of the element to be updated.
 - **remote**: A regular expression or string representing the asset's path to replace.
 - **local**: The URL to a local version of this asset.
+- **suffix**: Add a cache buster suffix to the path.
 
 ### Configure the assets to add
 
 ```javascript
 const additions = [{
   target: 'head',
-  tag: 'style',
-  attribute: 'innerhtml',
-  value: 'styles.css',
-  path: 'http://localhost/PATH/TO/ASSET/'
+  filename: 'styles.css',
+  path: 'http://localhost/PATH/TO/ASSET/',
+  suffix: "?t={t}",
+  wrapper: "<style>{w}</style>",
+  delay: 0
 }];
 ```
 
 - **target**: The addition will be made to the container that matches this selector.
-- **tag**: The new element to insert into the target container.
-- **attribute**: The attribute of the element to which a value or content will be applied.
-- **value**: The value or file contents that are added to the element.
+- **filename**: The name of the file to import.
 - **path**: the URL to a local version of the file.
+- **suffix**: Add a cache buster suffix to the path.
+- **wrapper**: Enclose the content in this HTML wrapper.
+- **delay**: delay the insertion by this much.
 
 ## Operating the script
 
