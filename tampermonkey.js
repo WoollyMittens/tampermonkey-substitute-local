@@ -15,29 +15,30 @@
 
 	const removals = [
 		{
-			target: 'link[rel="stylesheet"]',
-		},
+			target: 'title + link[rel="stylesheet"]',
+		}
 	];
 
 	const replacements = [
 		{
-			target: 'link[rel="stylesheet"]',
+			target: 'title + link[rel="stylesheet"]',
 			attribute: "href",
 			remote: /css\//,
 			local: "http://localhost/PATH/TO/CSS/",
 			suffix: "?t={t}",
-		},
+		}
 	];
 
 	const additions = [
 		{
 			target: "head",
 			filename: "styles.css",
+			rewrites: [],
 			path: "http://localhost/PATH/TO/ASSET/",
 			suffix: "?t={t}",
 			wrapper: "<style>{w}</style>",
 			delay: 0,
-		},
+		}
 	];
 
 	function performRemovals() {
@@ -74,8 +75,7 @@
 						console.log("error retrieving file:", evt);
 						return null;
 					}
-					// TODO: create a new container via a template
-					// use an existing element
+					// insert the contents into the document
 					setTimeout(() => {
 						let insertion = document.querySelector(addition.target);
 						let response = evt.responseText || evt.target.responseText;
