@@ -1,5 +1,7 @@
 # Cross-domain live updates.
 
+DEPRECATION WARNING: This script has been deprecated in favour of this [simplified implementation](https://github.com/WoollyMittens/tampermonkey-quick-refresh).
+
 This TamperMonkey script substitutes the assets of a remotely hosted site for local versions.
 
 ## 1. Install TamperMonkey extention in your browser
